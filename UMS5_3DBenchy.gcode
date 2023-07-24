@@ -31,7 +31,7 @@ M109 S245 ;head the head
 G280 S1 ;auto calibrate the printer bed 
 G0 Z20.001 ;head should move to a height of 20.001 
 G1 F2700 E-6.5
-;LAYER_COUNT:318
+;LAYER_COUNT:319
 ;LAYER:0
 M106 S5.1 ;fan on 
 M204 S1000 ;set the acceleration for the print head 
