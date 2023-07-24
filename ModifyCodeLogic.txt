@@ -1,0 +1,5 @@
+1. prompt user to input the number of layers to remove 
+2. remove the layer: 
+    -find the layers to remove
+    -remove the line until ";MESH:NONMESH:. eg. if number of layers to remove is 2, then detect two times the ";MESH:NONMESH"
+3. decrease each Z value: 0.15 for each layer 

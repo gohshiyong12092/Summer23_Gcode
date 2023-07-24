@@ -1,0 +1,5 @@
+Remove the layer command
+
+Adjust layer height
+minus 0.15 for each layers 
+minus the number of layers is removed
