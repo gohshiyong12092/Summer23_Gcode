@@ -10,6 +10,8 @@ int main(){
     char line[MAX_LINE_LENGTH];
     int layerToRemove;
     int numberOfLayers;
+    char currentLayer[10];
+    // int currentLayer;
 
     //prompt user to enter the input file name 
     printf("Enter the input G-code file name: ");
@@ -30,6 +32,21 @@ int main(){
         perror("Error opening the input file");
         return 1;
     }
+
+    //find the line to remove 
+    while(fgets(line,sizeof(line), inputFile) != NULL){
+        if(strstr(line,";LAYER:") != NULL){
+            sscanf(line,";LAYER:%s",&currentLayer);
+            printf("%s\n",currentLayer);
+        }
+
+        if(currentLayer == layerToRemove){
+            printf("Found Line: %d\n",line);
+            break;
+        }
+    }
+
+    fclose(inputFile);
     return 0;
 
 }
