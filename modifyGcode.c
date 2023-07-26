@@ -82,6 +82,12 @@ int main(){
             sscanf(line,";LAYER:%s",&currentLayer);
             current = atoi(currentLayer);
         }
+        else if(strstr(line,";LAYER_COUNT:") != NULL){
+            int layerCount = atoi(line + 13);
+            layerCount -= numberOfLayers;
+            //update the string 
+            snprintf(line +13, 15, "%d\n",layerCount);
+        }
 
         if(current == layerToRemove){
             Flag_Target = 1;
