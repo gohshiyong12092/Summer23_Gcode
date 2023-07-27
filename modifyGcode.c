@@ -1,5 +1,8 @@
 #include<stdio.h>
 #include<stdbool.h>
+#include<string.h>
+#include <stdlib.h>
+
 #define MAX_LINE_LENGTH 1024
 
 void modifyLayer(char *str, int num) {
@@ -12,28 +15,41 @@ void modifyLayer(char *str, int num) {
     }
 }
 
-void modifyZValue(char *line, double newValue) {
-    // Find the substring containing "Z"
-    char *zPtr = strstr(line, "Z");
-    if (zPtr == NULL) {
-        // The substring "Z" was not found in the line
-        return;
+// void modifyZValue(char *line, double newValue) {
+//     // Find the substring containing "Z"
+//     char *zPtr = strstr(line, "Z");
+//     if (zPtr == NULL) {
+//         // The substring "Z" was not found in the line
+//         return;
+//     }
+
+//     // Extract the numeric value after "Z"
+//     double currentValue;
+//     if (sscanf(zPtr + 1, "%lf", &currentValue) != 1) {
+//         // Failed to extract the current numeric value after "Z"
+//         return;
+//     }
+//     printf("newvalue: %d, current value: %d\n",newValue, currentValue);
+//     // Modify the value
+//     currentValue -= newValue;
+
+//     // Update the value in the line
+//     sprintf(zPtr + 1, "%.2f", currentValue);
+// }
+void modifyZValue(char* line, double newValue) {
+    // Find the position of 'Z' in the string
+    char* zPosition = strchr(line, 'Z');
+    // printf("%s\n",line);
+    if (zPosition != NULL) {
+        // Move the pointer to the position after 'Z'
+        zPosition++;
+        
+        // Convert the substring after 'Z' to a double and modify it
+        double currentValue = strtod(zPosition, NULL);
+        sprintf(zPosition, "%.2f\n", currentValue - newValue);
+        // printf("%s\n",line);
     }
-
-    // Extract the numeric value after "Z"
-    double currentValue;
-    if (sscanf(zPtr + 1, "%lf", &currentValue) != 1) {
-        // Failed to extract the current numeric value after "Z"
-        return;
-    }
-
-    // Modify the value
-    currentValue -= newValue;
-
-    // Update the value in the line
-    sprintf(zPtr + 1, "%.2f", currentValue);
 }
-
 int main(){
     void modifyLayer(char *str, int num);
     void modifyZValue(char *line, double newValue);
@@ -74,8 +90,11 @@ int main(){
     }
     bool Flag_Target = 0;
     bool Flag_Found = 0;
-    float ModifyVal = 0.15 * numberOfLayers;
+    numberOfLayers;
+    float ModifyVal = 0.15 * (numberOfLayers + 1);
     int count_remove = 0;
+    printf("Layer count: %d\n",numberOfLayers);
+    
     //find the line to remove 
     while(fgets(line,sizeof(line), inputFile) != NULL){
         if(strstr(line,";LAYER:") != NULL){
@@ -96,20 +115,23 @@ int main(){
         }
         if(Flag_Target == 0){
             if(Flag_Found == 1 && (strstr(line,";LAYER:") != NULL)){
-                modifyLayer(line,numberOfLayers);
+                printf("%s\n", line);
+                modifyLayer(line,(numberOfLayers+1));
+                
+            }
+            else if(Flag_Found == 1){
                 modifyZValue(line,ModifyVal);
             }
             fputs(line, outputFile);
-            
-            
         }
         else{
-            if(strstr(line,";MESH:NONMESH") != NULL && (count_remove < numberOfLayers)){
-               
-                fputs(line, outputFile);
+            if(strstr(line,"TIME_ELAPSED:") != NULL && (count_remove < numberOfLayers)){
+                count_remove += 1;
+            }
+            else if((strstr(line,"TIME_ELAPSED:") != NULL) && (count_remove == numberOfLayers)){
+                // fputs(line, outputFile);
                 Flag_Target = 0;
                 Flag_Found = 1;
-                count_remove += 1;
             }
         }
     }
