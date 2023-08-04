@@ -115,7 +115,7 @@ int main(){
         }
         if(Flag_Target == 0){
             if(Flag_Found == 1 && (strstr(line,";LAYER:") != NULL)){
-                printf("%s\n", line);
+                // printf("%s\n", line);
                 modifyLayer(line,(numberOfLayers+1));
                 
             }
