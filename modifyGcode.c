@@ -15,27 +15,6 @@ void modifyLayer(char *str, int num) {
     }
 }
 
-// void modifyZValue(char *line, double newValue) {
-//     // Find the substring containing "Z"
-//     char *zPtr = strstr(line, "Z");
-//     if (zPtr == NULL) {
-//         // The substring "Z" was not found in the line
-//         return;
-//     }
-
-//     // Extract the numeric value after "Z"
-//     double currentValue;
-//     if (sscanf(zPtr + 1, "%lf", &currentValue) != 1) {
-//         // Failed to extract the current numeric value after "Z"
-//         return;
-//     }
-//     printf("newvalue: %d, current value: %d\n",newValue, currentValue);
-//     // Modify the value
-//     currentValue -= newValue;
-
-//     // Update the value in the line
-//     sprintf(zPtr + 1, "%.2f", currentValue);
-// }
 void modifyZValue(char* line, double newValue) {
     // Find the position of 'Z' in the string
     char* zPosition = strchr(line, 'Z');
@@ -90,10 +69,9 @@ int main(){
     }
     bool Flag_Target = 0;
     bool Flag_Found = 0;
-    numberOfLayers;
+    numberOfLayers = numberOfLayers - 1;
     float ModifyVal = 0.15 * (numberOfLayers + 1);
     int count_remove = 0;
-    printf("Layer count: %d\n",numberOfLayers);
     
     //find the line to remove 
     while(fgets(line,sizeof(line), inputFile) != NULL){
@@ -108,28 +86,28 @@ int main(){
             snprintf(line +13, 15, "%d\n",layerCount);
         }
 
-        if(current == layerToRemove){
+        if(current == layerToRemove && Flag_Found == 0){
             Flag_Target = 1;
-            printf("Found Line: %s\n",line);
             current = 0;
         }
         if(Flag_Target == 0){
             if(Flag_Found == 1 && (strstr(line,";LAYER:") != NULL)){
                 // printf("%s\n", line);
                 modifyLayer(line,(numberOfLayers+1));
-                
             }
             else if(Flag_Found == 1){
                 modifyZValue(line,ModifyVal);
             }
             fputs(line, outputFile);
         }
-        else{
+        else if(Flag_Target == 1){
             if(strstr(line,"TIME_ELAPSED:") != NULL && (count_remove < numberOfLayers)){
                 count_remove += 1;
+                
+                
             }
-            else if((strstr(line,"TIME_ELAPSED:") != NULL) && (count_remove == numberOfLayers)){
-                // fputs(line, outputFile);
+            if((strstr(line,"TIME_ELAPSED:") != NULL) && (count_remove == numberOfLayers)){
+                
                 Flag_Target = 0;
                 Flag_Found = 1;
             }
