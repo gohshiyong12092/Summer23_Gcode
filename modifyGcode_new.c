@@ -131,7 +131,7 @@ int main(){
     }
     bool Flag_Target = 0;
     bool Flag_Found = 0;
-    // bool Flag_Evalue = 0;
+    bool Flag_EReset= 0;
     // numberOfLayers = numberOfLayers;
     float ModifyVal = 0.15 * (numberOfLayers);
     int count_remove = 0;
@@ -146,6 +146,7 @@ int main(){
     while(fgets(line,sizeof(line), inputFile) != NULL){
         char *e_value_start = strstr(line, "E");
         char *y_value_start = strstr(line, "Y");
+        char *f2700_value_start = strstr(line, "F2700");
         if(strstr(line,";LAYER:") != NULL){
             sscanf(line,";LAYER:%s",&currentLayer);
             current = atoi(currentLayer);
@@ -157,13 +158,15 @@ int main(){
             snprintf(line +13, 15, "%d\n",layerCount);
         }
         //get the E value 
-        else if (e_value_start && y_value_start) {
+        else if (e_value_start && (line[0] != ';' ) && y_value_start != NULL ) {
             float e_value;
             if (sscanf(e_value_start, "E%f", &e_value) == 1) {
                 e_current = e_value;
             }
         }
-
+        else if (strstr(line,"E0") != NULL && Flag_Found == 1){
+            Flag_EReset = 1;
+        }
         //found the layer to remove 
         if(current == layerToRemove && Flag_Found == 0){
             Flag_Target = 1;
@@ -180,18 +183,19 @@ int main(){
                 modifyZValue(line,ModifyVal);
                 //check if thhe string has a e value, need to look for the next e to find how much value need to add 
             //    void modifyEValue(char* line, float currentValue, float previousValue, float initialValue, char* ePosition ) 
-                if (e_value_start != NULL && y_value_start != NULL) {
-                    // Move the pointer to the position after 'Z'
+                if (!Flag_EReset && e_value_start != NULL && y_value_start != NULL && line[0] != ';' ) {
+                    
                     e_value_start++;
                     float newValue = e_before + e_current - e_after;
-                    sprintf(e_value_start, "%.2f\n", newValue);
-                    e_after = newValue;
-                    // printf("%s\n",line);
+                    printf("current: %.5f, before: %.5f, after: %.5f\n",e_current, e_before, e_after);
+                    sprintf(e_value_start, "%.5f\n", newValue);
+                    e_after = e_current;
                 }
-                else if (e_value_start != NULL){
+                else if (!Flag_EReset && e_value_start != NULL && f2700_value_start != NULL &&(line[0] != ';') && y_value_start == NULL ){
                     e_value_start++;
                     float newValue = e_current - 6.5;
-                    sprintf(e_value_start, "%.2f\n", newValue);
+                    sprintf(e_value_start, "%.5f\n", newValue);
+
                 }
             }
             
