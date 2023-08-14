@@ -88,29 +88,6 @@ float getE(char* line){
     return -1;
 }
 
-// struct Queue {
-//     char data[MAX_SIZE][100]; // Array to store strings
-//     int front;
-//     int rear;
-// };
-
-// void enqueue(struct Queue *queue, const char *value) {
-//     if (queue->rear < MAX_SIZE - 1) {
-//         queue->rear++;
-//         strcpy(queue->data[queue->rear], value);
-//     } else {
-//         printf("Queue is full!\n");
-//     }
-// }
-
-// void dequeue(struct Queue *queue) {
-//     if (queue->front <= queue->rear) {
-//         printf("Dequeued: %s\n", queue->data[queue->front]);
-//         queue->front++;
-//     } else {
-//         printf("Queue is empty!\n");
-//     }
-// }
 
 int main(){
     void modifyLayer(char *str, int num);
@@ -168,7 +145,7 @@ int main(){
     //find the line to remove 
     while(fgets(line,sizeof(line), inputFile) != NULL){
         char *e_value_start = strstr(line, "E");
-
+        char *y_value_start = strstr(line, "Y");
         if(strstr(line,";LAYER:") != NULL){
             sscanf(line,";LAYER:%s",&currentLayer);
             current = atoi(currentLayer);
@@ -180,7 +157,7 @@ int main(){
             snprintf(line +13, 15, "%d\n",layerCount);
         }
         //get the E value 
-        else if (e_value_start) {
+        else if (e_value_start && y_value_start) {
             float e_value;
             if (sscanf(e_value_start, "E%f", &e_value) == 1) {
                 e_current = e_value;
@@ -203,13 +180,18 @@ int main(){
                 modifyZValue(line,ModifyVal);
                 //check if thhe string has a e value, need to look for the next e to find how much value need to add 
             //    void modifyEValue(char* line, float currentValue, float previousValue, float initialValue, char* ePosition ) 
-                if (e_value_start != NULL) {
+                if (e_value_start != NULL && y_value_start != NULL) {
                     // Move the pointer to the position after 'Z'
                     e_value_start++;
                     float newValue = e_before + e_current - e_after;
                     sprintf(e_value_start, "%.2f\n", newValue);
                     e_after = newValue;
                     // printf("%s\n",line);
+                }
+                else if (e_value_start != NULL){
+                    e_value_start++;
+                    float newValue = e_current - 6.5;
+                    sprintf(e_value_start, "%.2f\n", newValue);
                 }
             }
             
@@ -221,17 +203,12 @@ int main(){
                 
                 
             }
-            // if (line[0] != ';' && line[0] != '\n') {
-            //     count_RemoveLine++;
-            // }
+
             if((strstr(line,"TIME_ELAPSED:") != NULL) && (count_remove == numberOfLayers)){
                 
                 Flag_Target = 0;
                 Flag_Found = 1;
                 e_after = e_current;
-                // printf("Total remove lines: %d\n", count_RemoveLine);
-                // percentage = count_RemoveLine/(totalLine*1.0);
-                // printf("Percentage: %.3f\n", percentage);
                 
             }
         }
