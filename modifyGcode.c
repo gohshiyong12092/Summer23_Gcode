@@ -69,8 +69,8 @@ int main(){
     }
     bool Flag_Target = 0;
     bool Flag_Found = 0;
-    numberOfLayers = numberOfLayers - 1;
-    float ModifyVal = 0.15 * (numberOfLayers + 1);
+    // numberOfLayers = numberOfLayers;
+    float ModifyVal = 0.15 * (numberOfLayers);
     int count_remove = 0;
     
     //find the line to remove 
@@ -93,7 +93,7 @@ int main(){
         if(Flag_Target == 0){
             if(Flag_Found == 1 && (strstr(line,";LAYER:") != NULL)){
                 // printf("%s\n", line);
-                modifyLayer(line,(numberOfLayers+1));
+                modifyLayer(line,numberOfLayers);
             }
             else if(Flag_Found == 1){
                 modifyZValue(line,ModifyVal);
