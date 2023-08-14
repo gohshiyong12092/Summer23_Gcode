@@ -27,16 +27,7 @@ int main() {
             lineCount++;
         }
     }
-    // while ((ch = fgetc(file)) != EOF) {
-    //     if (ch == '\n') {
-    //         lineCount++;
-    //     }
-    // }
 
-    // // Increment line count for the last line if it doesn't end with a newline
-    // if (ch != '\n' && lineCount > 0) {
-    //     lineCount++;
-    // }
 
     printf("Total lines in the file: %d\n", lineCount);
 
