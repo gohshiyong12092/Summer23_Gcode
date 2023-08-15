@@ -139,6 +139,7 @@ int main(){
     float e_before = 0;
     float e_after = 0;
     float e_current = 0;
+    float e_latest = 0;
     
     // int count_RemoveLine = 0;
     // float percentage = 0;
@@ -158,7 +159,7 @@ int main(){
             snprintf(line +13, 15, "%d\n",layerCount);
         }
         //get the E value 
-        else if (e_value_start && (line[0] != ';' ) && y_value_start != NULL ) {
+        else if (e_value_start && (line[0] != ';' ) && y_value_start) {
             float e_value;
             if (sscanf(e_value_start, "E%f", &e_value) == 1) {
                 e_current = e_value;
@@ -186,16 +187,17 @@ int main(){
                 if (!Flag_EReset && e_value_start != NULL && y_value_start != NULL && line[0] != ';' ) {
                     
                     e_value_start++;
-                    float newValue = e_before + e_current - e_after;
-                    printf("current: %.5f, before: %.5f, after: %.5f\n",e_current, e_before, e_after);
+                    float newValue = e_before + (e_current - e_after);
+                    // printf("current: %.5f, before: %.5f, after: %.5f\n",e_current, e_before, e_after);
                     sprintf(e_value_start, "%.5f\n", newValue);
                     e_after = e_current;
+                    e_latest = newValue;
                 }
                 else if (!Flag_EReset && e_value_start != NULL && f2700_value_start != NULL &&(line[0] != ';') && y_value_start == NULL ){
                     e_value_start++;
-                    float newValue = e_current - 6.5;
+                    float newValue = e_latest - 6.5;
                     sprintf(e_value_start, "%.5f\n", newValue);
-
+                    printf("current: %.5f, before: %.5f, after: %.5f\n",e_current, e_before, e_after);
                 }
             }
             
